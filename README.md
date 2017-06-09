@@ -30,7 +30,7 @@ Outputs:
 TAP version 13
 # compare two DOM strings
 ok 1 <section>
-not ok 2 ·· hello planet
+not ok 2 ·· hello world
   ---
     operator: equal
     expected: '·· hello world'
@@ -53,7 +53,7 @@ ok 9 </div>
 ```
 
 ## API
-### `assertHtml(assert, expected, actual)`
+### `assertHtml(assert, actual, expected)`
 Assert two DOM strings are equal using a custom assert function. Calls
 `assert.equal()` method from the assert function.
 
