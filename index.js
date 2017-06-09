@@ -1,7 +1,10 @@
+var shallowEqual = require('shallow-equal/objects')
 var assert = require('assert')
 
 var tokenize = require('./lib/tokenize')
 
+// https://stackoverflow.com/questions/317053/regular-expression-for-extracting-tag-attributes
+var matchAttributes = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|[>"']))+.)["']?/g
 var indentChars = '··'
 
 module.exports = assertHtml
@@ -15,9 +18,13 @@ function assertHtml (_assert, left, right) {
   var rightTokens = tokenize(right)
 
   var max = Math.max(leftTokens.length, rightTokens.length)
+
+  // start at -1 so the initial opening tag puts us at 0
   var leftDepth = -1
   var rightDepth = -1
-  var leftToken, rightToken, leftString, rightString
+
+  var leftToken, rightToken, leftString, rightString, leftAttrs, rightAttrs,
+    leftFmt, rightFmt, leftTag, rightTag, leftType, rightType
   var leftClosed = false
   var rightClosed = false
 
@@ -25,22 +32,25 @@ function assertHtml (_assert, left, right) {
     leftToken = leftTokens[i]
     rightToken = rightTokens[i]
 
-    if (leftToken[0] === 'open') {
+    leftType = leftToken[0]
+    rightType = rightToken[0]
+
+    if (leftType === 'open') {
       leftDepth += 1
       leftClosed = false
-    } else if (leftToken[0] === 'text') {
+    } else if (leftType === 'text') {
       if (!leftClosed) leftDepth += 1
-    } else if (leftToken[0] === 'close') {
+    } else if (leftType === 'close') {
       leftDepth -= 1
       leftClosed = true
     }
 
-    if (rightToken[0] === 'open') {
+    if (rightType === 'open') {
       rightDepth += 1
       rightClosed = false
-    } else if (rightToken[0] === 'text') {
+    } else if (rightType === 'text') {
       if (!rightClosed) rightDepth += 1
-    } else if (rightToken[0] === 'close') {
+    } else if (rightType === 'close') {
       rightDepth -= 1
       rightClosed = true
     }
@@ -48,14 +58,40 @@ function assertHtml (_assert, left, right) {
     leftString = String(leftToken[1])
     rightString = String(rightToken[1])
 
+    if (leftType !== 'text') leftAttrs = getAttributes(leftString)
+    if (rightType !== 'text') rightAttrs = getAttributes(rightString)
+
+    leftFmt = leftString
     for (var j = 0; j < leftDepth; j++) {
-      leftString = indentChars + ' ' + leftString
+      leftFmt = indentChars + ' ' + leftFmt
     }
 
+    rightFmt = rightString
     for (var k = 0; k < rightDepth; k++) {
-      rightString = indentChars + ' ' + rightString
+      rightFmt = indentChars + ' ' + rightFmt
     }
 
-    _assert.equal(leftString, rightString, leftString)
+    // if attributes aren't the same, just compare the two versions
+    if (!shallowEqual(leftAttrs, rightAttrs) || leftType !== rightType ||
+      leftType === 'text' || rightType === 'text') {
+      _assert.equal(leftString, rightString, leftFmt)
+    } else {
+      leftTag = leftString.match(/^<[/]{0,1}(\w*)/)[1]
+      rightTag = rightString.match(/^<[/]{0,1}(\w*)/)[1]
+      _assert.equal(leftTag, rightTag, leftFmt)
+    }
   }
+}
+
+function getAttributes (str) {
+  var attrs = str.match(matchAttributes)
+  if (!attrs) return {}
+  return attrs.reduce(function (kv, pair) {
+    var arr = pair.split('=')
+    var key = arr[0]
+    var val = arr[1]
+    if (val) val = val.replace(/['"]/g, '')
+    kv[key] = val
+    return kv
+  }, {})
 }

@@ -8,7 +8,9 @@
     "start": "node .",
     "test": "standard && npm run deps"
   },
-  "dependencies": {},
+  "dependencies": {
+    "shallow-equal": "^1.0.0"
+  },
   "devDependencies": {
     "bel": "^5.0.0",
     "dependency-check": "^2.8.0",
