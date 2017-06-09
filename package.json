@@ -1,0 +1,24 @@
+{
+  "name": "assert-html",
+  "description": "Assert two HTML strings are equal",
+  "repository": "yoshuawuyts/assert-html",
+  "version": "1.0.0",
+  "scripts": {
+    "deps": "dependency-check . && dependency-check . --extra --no-dev",
+    "start": "node .",
+    "test": "standard && npm run deps"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "bel": "^5.0.0",
+    "dependency-check": "^2.8.0",
+    "standard": "^10.0.2",
+    "tape": "^4.6.3"
+  },
+  "keywords": [
+    "assert",
+    "html",
+    "node"
+  ],
+  "license": "MIT"
+}
