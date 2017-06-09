@@ -2,7 +2,9 @@
 [![npm version][2]][3] [![build status][4]][5]
 [![downloads][8]][9] [![js-standard-style][10]][11]
 
-Assert two HTML strings are equal. Similar to [spok][spok] but for HTML.
+Assert two HTML strings are equal. Similar to [spok][spok] but for HTML. Use
+[assert-snapshot](https://github.com/yoshuawuyts/assert-snapshot) if you want
+an automated workflow.
 
 ## Usage
 ```js
@@ -57,6 +59,7 @@ Assert two DOM strings are equal using a custom assert function. Calls
 
 ## See Also
 - [thlorenz/spok](https://github.com/thlorenz/spok)
+- [yoshuawuyts/assert-snapshot](https://github.com/yoshuawuyts/assert-snapshot)
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)

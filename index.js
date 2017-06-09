@@ -29,8 +29,8 @@ function assertHtml (_assert, left, right) {
   var rightClosed = false
 
   for (var i = 0; i < max; i++) {
-    leftToken = leftTokens[i]
-    rightToken = rightTokens[i]
+    leftToken = leftTokens[i] || []
+    rightToken = rightTokens[i] || []
 
     leftType = leftToken[0]
     rightType = rightToken[0]
@@ -74,11 +74,11 @@ function assertHtml (_assert, left, right) {
     // if attributes aren't the same, just compare the two versions
     if (!shallowEqual(leftAttrs, rightAttrs) || leftType !== rightType ||
       leftType === 'text' || rightType === 'text') {
-      _assert.equal(leftString, rightString, leftFmt)
+      _assert.equal(leftString, rightString, rightFmt)
     } else {
       leftTag = leftString.match(/^<[/]{0,1}(\w*)/)[1]
       rightTag = rightString.match(/^<[/]{0,1}(\w*)/)[1]
-      _assert.equal(leftTag, rightTag, leftFmt)
+      _assert.equal(leftTag, rightTag, rightFmt)
     }
   }
 }
