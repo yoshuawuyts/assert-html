@@ -6,7 +6,7 @@
   "scripts": {
     "deps": "dependency-check . && dependency-check . --extra --no-dev",
     "start": "node .",
-    "test": "standard && npm run deps"
+    "test": "standard && npm run deps && node test"
   },
   "dependencies": {
     "shallow-equal": "^1.0.0"
