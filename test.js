@@ -54,3 +54,16 @@ tape('allow attributes with only keys', function (_assert) {
 
   _assert.end()
 })
+
+tape('allow title tag', function (_assert) {
+  var a, b
+
+  a = html`<head><title>Hi hello how are you?</title></head>`.toString()
+  b = html`<head><title>Hi hello how are you?</title></head>`.toString()
+
+  _assert.doesNotThrow(function () {
+    assertHtml(assert, a, b)
+  })
+
+  _assert.end()
+})
