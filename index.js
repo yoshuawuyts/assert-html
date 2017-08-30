@@ -5,6 +5,7 @@ var tokenize = require('./lib/tokenize')
 
 // https://stackoverflow.com/questions/317053/regular-expression-for-extracting-tag-attributes
 var matchAttributes = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|[>"']))+.)["']?/g
+var matchOpenTags = /(^<meta)|(^<link)/
 var indentChars = '··'
 
 module.exports = assertHtml
@@ -35,9 +36,14 @@ function assertHtml (_assert, left, right) {
     leftType = leftToken[0]
     rightType = rightToken[0]
 
+    leftString = String(leftToken[1])
+    rightString = String(rightToken[1])
+
     if (leftType === 'open') {
-      leftDepth += 1
-      leftClosed = false
+      if (leftString !== '<!DOCTYPE html>' && !matchOpenTags.test(leftString)) {
+        leftDepth += 1
+        leftClosed = false
+      }
     } else if (leftType === 'text') {
       if (!leftClosed) leftDepth += 1
     } else if (leftType === 'close') {
@@ -46,17 +52,16 @@ function assertHtml (_assert, left, right) {
     }
 
     if (rightType === 'open') {
-      rightDepth += 1
-      rightClosed = false
+      if (rightString !== '<!DOCTYPE html>' && !matchOpenTags.test(rightString)) {
+        rightDepth += 1
+        rightClosed = false
+      }
     } else if (rightType === 'text') {
       if (!rightClosed) rightDepth += 1
     } else if (rightType === 'close') {
       rightDepth -= 1
       rightClosed = true
     }
-
-    leftString = String(leftToken[1])
-    rightString = String(rightToken[1])
 
     if (leftType !== 'text') leftAttrs = getAttributes(leftString)
     if (rightType !== 'text') rightAttrs = getAttributes(rightString)
